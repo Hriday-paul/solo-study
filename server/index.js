@@ -28,6 +28,9 @@ async function run() {
 
         const dataBase = client.db("soloStudy");
         const videoCollection = dataBase.collection("videos");
+        const audioCollection = dataBase.collection("audios");
+        const motivationCollection = dataBase.collection("motivation");
+
 
         app.post('/addVideo', async (req, res) => {
             try {
@@ -38,9 +41,46 @@ async function run() {
             }
         });
 
+        app.post('/addAudio', async (req, res) => {
+            try {
+                const result = await audioCollection.insertOne(req.body);
+                res.send(result);
+            } catch (err) {
+                res.status(400).send({ err })
+            }
+        });
+
         app.get('/getVideoByTab/:tabId', async (req, res) => {
             try {
                 const result = await videoCollection.find({tabId : parseInt(req.params.tabId)}).toArray();
+                res.send(result);
+            } catch (err) {
+                res.status(400).send({ err })
+            }
+        })
+
+        app.get('/audios', async (req, res) => {
+            try {
+                const result = await audioCollection.find().toArray();
+                res.send(result);
+            } catch (err) {
+                res.status(400).send({ err })
+            }
+        })
+
+        app.post('/addMotivation', async (req, res) => {
+            try {
+                const result = await motivationCollection.insertOne(req.body);
+                res.send(result);
+            } catch (err) {
+                res.status(400).send({ err })
+            }
+        });
+
+        // get motivation
+        app.get('/motivations', async (req, res) => {
+            try {
+                const result = await motivationCollection.find().toArray();
                 res.send(result);
             } catch (err) {
                 res.status(400).send({ err })

@@ -4,6 +4,7 @@ import VideoInnerTab from "../../Ui/VideoInnerTab/VideoInnerTab";
 
 
 const VideoTab = () => {
+
     return (
         <div className="w-full">
             <div className="flex flex-row justify-between items-center">
@@ -16,6 +17,8 @@ const VideoTab = () => {
             <div className="my-3">
                 <VideoInnerTab></VideoInnerTab>
             </div>
+            
+
         </div>
     );
 };

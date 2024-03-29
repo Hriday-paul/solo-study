@@ -2,6 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
-iframe{
+iframe {
     overflow: hidden !important;
 }
+
+
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-track {
+    background-color: rgb(255, 255, 255);
+    height: 2px;
+}
+
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle:hover .ant-slider-track{
+    background-color: rgb(255, 255, 255);
+}
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-rail{
+    background-color: gray;
+    height: 2px;
+}
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider:hover .ant-slider-rail{
+    background-color: gray;
+    height: 2px;
+}
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider:hover .ant-slider-track{
+    background-color: rgb(255, 255, 255);
+}
+
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle::after {
+    background-color: black;
+    height: 5px;
+    width: 5px;
+    box-shadow: 0 0 0 2px white !important;
+    margin-top: 1px;
+}
+
+
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle:hover::after {
+    background-color: black;
+    height: 5px;
+    width: 5px;
+    box-shadow: 0 0 0 2px white !important;
+    inset-inline-start: 0;
+    inset-block-start : 0;
+}
+
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle:focus::after {
+    background-color: black;
+    height: 5px;
+    width: 5px;
+    box-shadow: 0 0 0 2px white !important;
+    inset-inline-start: 0;
+    inset-block-start : 0;
+}
+
+:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle::after:hover .ant-slider-track {
+    background-color: chartreuse;
+}
+
+/* audio scroll style change */
+.audio-scroll::-webkit-scrollbar{
+    width: 4px;
+}
+
+.audio-scroll::-webkit-scrollbar-thumb {
+    background: #868585;
+    border-radius: 5px;
+  }

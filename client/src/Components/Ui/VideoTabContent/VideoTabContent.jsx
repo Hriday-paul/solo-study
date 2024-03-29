@@ -3,6 +3,7 @@ import UseAxiosPublic from '../../../Hooks/UseAxiosPublic'
 import VideoLoading from "../VideoLoading/VideoLoading";
 import VideoError from "../VideoError/VideoError";
 import { BgHandlerContext } from "../../../ContextHandler/BgHandle/BgHandle";
+import BgVideoSoundHandler from "../BgVideoSoundHandler/BgVideoSoundHandler";
 
 const initilaData = {
     loading: true,
@@ -28,33 +29,39 @@ const reducer = (currentState, action) => {
 }
 
 const VideoTabContent = ({ tabIndx }) => {
-    const {setBgVideoSrc} = useContext(BgHandlerContext);
+    const { changeVideo } = useContext(BgHandlerContext);
     const [fetchingState, dispatch] = useReducer(reducer, initilaData);
     const axiosPublic = UseAxiosPublic();
 
-    useEffect(()=>{
+    useEffect(() => {
         axiosPublic.get(`/getVideoByTab/${tabIndx}`)
-        .then(({data})=>{
-            dispatch({type : 'success', data})
-        })
-        .catch(()=>{
-            dispatch({type : 'error'})
-        })
-    },[])
+            .then(({ data }) => {
+                dispatch({ type: 'success', data })
+            })
+            .catch(() => {
+                dispatch({ type: 'error' })
+            })
+    }, [])
 
     return (
         <div>
             {
-                fetchingState?.loading ? <VideoLoading/> : fetchingState?.error ? <VideoError/> : 
-                <div className="grid grid-cols-3 gap-3 my-3">
-                    {
-                        fetchingState?.data?.map((item)=>{
-                            return <div onClick={()=>setBgVideoSrc(item?.video)} key={item._id} className="cursor-pointer">
-                                <img loading="lazy" className="rounded-lg" src={item?.thumb} alt="thumbnail image" />
-                            </div>
-                        })
-                    }
-                </div>
+                fetchingState?.loading ? <VideoLoading /> : fetchingState?.error ? <VideoError /> :
+                    <div>
+                        <div className="grid grid-cols-3 gap-3 my-3">
+                            {
+                                fetchingState?.data?.map((item) => {
+                                    return <div onClick={() => changeVideo(item?.video)} key={item._id} className="cursor-pointer">
+                                        <img loading="lazy" className="rounded-lg" src={item?.thumb} alt="thumbnail image" />
+                                    </div>
+                                })
+                            }
+                        </div>
+                        {
+                            fetchingState?.data.length > 0 && <BgVideoSoundHandler/>
+                        }
+                    </div>
+
             }
         </div>
     );
