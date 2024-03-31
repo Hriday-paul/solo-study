@@ -7,6 +7,7 @@ import AudioTab from "../AudioTab/AudioTab";
 import { RiDoubleQuotesL } from "react-icons/ri";
 import MotivationTab from "../MotivationTab/MotivationTab";
 import FullScreen from "../../Ui/FullScreen/FullScreen";
+import StatisticsTab from "../StatisticsTab/StatisticsTab";
 
 const RightSideTab = () => {
     const [tabIndex, setTabIndex] = useState(0);
@@ -46,7 +47,7 @@ const RightSideTab = () => {
                         </div>
                     </Tab>
 
-                    <FullScreen/>
+                    <FullScreen />
 
                 </TabList>
 
@@ -95,16 +96,18 @@ const RightSideTab = () => {
                     </div>
                 </TabPanel>
 
+                {/* statistics tab */}
                 <TabPanel>
                     <div className="draggable-container absolute top-[calc(48px+16px)] right-0 z-10">
                         <div>
-                            <div className="transition-opacity duration-250 ease-in-out w-[225px] backdrop-blur bg-[#282322] bg-opacity-70 p-3 py-3 px-5 rounded-2xl">
-                                <div className="path--fill-current mr-4 flex items-center justify-between">
-                                    statis tics tab
+                            <div className="transition-opacity duration-250 ease-in-out w-[225px] backdrop-blur bg-opacity-70 p-3 bg-[#282322] py-3 px-5 rounded-2xl">
+                                <div className="path--fill-current flex items-center justify-between">
+                                    <div className="w-full">
+                                        <StatisticsTab />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </TabPanel>
             </Tabs>

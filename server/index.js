@@ -27,10 +27,46 @@ async function run() {
         await client.connect();
 
         const dataBase = client.db("soloStudy");
+        const users = dataBase.collection("users");
+        const study = dataBase.collection("study");
         const videoCollection = dataBase.collection("videos");
         const audioCollection = dataBase.collection("audios");
         const motivationCollection = dataBase.collection("motivation");
 
+        app.put('/addUser', async (req, res) => {
+            try {
+                const filter = { email: req.body.email };
+                const options = { upsert: true };
+                const data = {
+                    $set: req.body
+                }
+                const result = await users.updateOne(filter, data, options);
+                const findDoc = await study.findOne(filter);
+
+                if(!findDoc){
+                    await study.insertOne({email: req.body.email, studyTime: 0, breakTime: 0})
+                }
+
+                res.send(result);
+            } catch (err) {
+                res.status(400).send({ err })
+            }
+        });
+
+        app.put('/updateStudy',  async (req, res) => {
+            try {
+                // const filter = { email: req.body.email, date :  req.body.date};
+                // console.log(req.body);
+                // const data = {
+                //     $inc: { studyTime: req.body.studyTime, breakTime: req.body.breakTime },
+                //     $set : {email : req.body.email, date : req.body.date}
+                // }
+                // const result = await study.updateOne(filter, data, {upsert : true});
+                // res.send(result);
+            } catch (err) {
+                res.status(400).send({ err })
+            }
+        });
 
         app.post('/addVideo', async (req, res) => {
             try {
@@ -52,7 +88,7 @@ async function run() {
 
         app.get('/getVideoByTab/:tabId', async (req, res) => {
             try {
-                const result = await videoCollection.find({tabId : parseInt(req.params.tabId)}).toArray();
+                const result = await videoCollection.find({ tabId: parseInt(req.params.tabId) }).toArray();
                 res.send(result);
             } catch (err) {
                 res.status(400).send({ err })

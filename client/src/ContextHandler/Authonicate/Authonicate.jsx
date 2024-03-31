@@ -23,6 +23,10 @@ const Autthonicate = ({ children }) => {
         setLoading(true)
         return signInWithPopup(auth, provider)
     }
+    
+    const githubLoagin = ()=>{
+
+    }
 
     const logOutUser = () => {
         setLoading(true)
@@ -47,6 +51,7 @@ const Autthonicate = ({ children }) => {
         creatUser,
         loginUser,
         googleLogin,
+        githubLoagin,
         logOutUser,
     }
 

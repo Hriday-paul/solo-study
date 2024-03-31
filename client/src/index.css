@@ -67,3 +67,13 @@ iframe {
     background: #868585;
     border-radius: 5px;
   }
+
+ /* ant design change radio size */
+
+ :where(.css-dev-only-do-not-override-djtmh8).ant-radio-wrapper .ant-radio-inner{
+    height: 18px;
+    width: 18px;
+ }
+ .ant-radio-wrapper:nth-child(1){
+    font-size: 18px;
+ }
