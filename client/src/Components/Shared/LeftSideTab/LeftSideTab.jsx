@@ -1,33 +1,47 @@
-import { useReducer } from "react";
+import { useContext, useReducer } from "react";
 import Counter from "../../Ui/Counter/Counter";
 import SessionGoal from "../../Ui/SessionGoal/SessionGoal";
+import { AuthContext } from "../../../ContextHandler/Authonicate/Authonicate";
+import { useNavigate } from "react-router-dom";
 
 const initialState = {
-    personalTimerVisible : true,
-    sessionGoalVisible : false
+    personalTimerVisible: true,
+    sessionGoalVisible: false
 }
-const reducer = (currentState, action)=>{
-    if(action == 'setPersonalTimer'){
-        return {...currentState, personalTimerVisible : !currentState.personalTimerVisible}
+const reducer = (currentState, action) => {
+    if (action == 'setPersonalTimer') {
+        return { ...currentState, personalTimerVisible: !currentState.personalTimerVisible }
     }
-    else if(action == 'setSessionGoal'){
-        return {...currentState, sessionGoalVisible : !currentState.sessionGoalVisible}
+    else if (action == 'setSessionGoal') {
+        return { ...currentState, sessionGoalVisible: !currentState.sessionGoalVisible }
     }
-    else{
+    else {
         return currentState
     }
 }
 
 const LeftSideTab = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const { userInfo } = useContext(AuthContext);
+    const navig = useNavigate();
+
+    const clickPersonalTimer = () => {
+        if (!userInfo) {
+            navig('/register')
+        }
+        else {
+            dispatch('setPersonalTimer');
+        }
+    }
+
     return (
         <div className="relative z-30 mt-8 flex text-xs text-white">
-            <div onClick={()=>dispatch('setPersonalTimer')}>
+            <div onClick={clickPersonalTimer}>
                 <div className="flex flex-row items-start justify-center hover:cursor-pointer bg-opacity-90 hover:bg-opacity-70 min-w-[112px] h-full py-2 px-3 bg-[#282322] rounded-lg transition-opacity duration-250 ease-in-out">
                     Personal timer
                 </div>
             </div>
-            <div onClick={()=>dispatch('setSessionGoal')} className="ml-5">
+            <div onClick={() => dispatch('setSessionGoal')} className="ml-5">
                 <div className="flex flex-row items-start justify-center hover:cursor-pointer bg-opacity-90 hover:bg-opacity-70 min-w-[112px] h-full py-2 px-3 bg-[#282322] rounded-lg transition-opacity duration-250 ease-in-out">
                     Session goals
                 </div>

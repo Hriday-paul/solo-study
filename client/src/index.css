@@ -77,3 +77,7 @@ iframe {
  .ant-radio-wrapper:nth-child(1){
     font-size: 18px;
  }
+
+ .ant-drawer-close, .ant-drawer-title{
+    color: white !important;
+}

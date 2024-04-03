@@ -41,6 +41,20 @@ const Counter = () => {
         breakTime: false,
     });
     const statesRef = useRef(states);
+    let usesStudyTime = 0;
+    let usesBreakTime = 0;
+
+    const postStudyTime = (studyTime, breakTime) => {
+        console.log("func called", studyTime, breakTime);
+        if (breakTime!=0 || studyTime != 0) {
+            axiosPublic.put('/updateStudyTime', {
+                email: 'hridoychandrapaul.10@gmail.com',
+                date: `${new Date().getFullYear()}-${(new Date().getMonth() + 1)}-${new Date().getDate()}`,
+                studyTime,
+                breakTime: breakTime
+            })
+        }
+    }
 
     useEffect(() => {
         const unloadFun = (e) => {
@@ -59,63 +73,99 @@ const Counter = () => {
             }
 
             const studyTime = Math.ceil(initMinute - useLessTime);
+            
 
-            if (breakMin != 0 || studyTime != 0) {
-                axiosPublic.put('/updateStudy', {
-                    email: userInfo.email,
-                    date: `${new Date().getFullYear()}-${(new Date().getMonth() + 1)}-${new Date().getDate()}`,
-                    studyTime,
-                    breakTime: breakMin
-                })
-            }
-            return e.returnValue = ''
+            postStudyTime((studyTime - usesStudyTime), (breakMin - usesBreakTime));
+
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            usesStudyTime += studyTime;
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            usesBreakTime += breakMin;
+
+            return e.returnValue = '';
         }
-
         window.addEventListener('beforeunload', unloadFun);
         return () => window.removeEventListener('beforeunload', unloadFun);
-    }, [])
+    }, []);
 
     useEffect(() => {
         let intervalId;
-        if (isRunning.focusTime) {
+        if (isRunning.focusTime || isRunning.breakTime) {
             statesRef.current = states;
-            // setDisplayShort(true);
-            dispatch({ type: 'setDisplayShort', status: true })
+
+            dispatch({ type: 'setDisplayShort', status: true });
+
             intervalId = setInterval(() => {
+
                 let newCount = { ...states.count };
                 let totalSeconds = newCount.hour * 3600 + newCount.minute * 60 + newCount.second;
 
-                if (totalSeconds > 0) {
+                let breakCount = { ...states.breakCount };
+                let totalBreakSeconds = breakCount.hour * 3600 + breakCount.minute * 60 + breakCount.second;
+
+
+                if (totalSeconds > 0 && isRunning.focusTime) {
                     totalSeconds--;
                     newCount.hour = Math.floor(totalSeconds / 3600);
                     newCount.minute = Math.floor((totalSeconds % 3600) / 60);
                     newCount.second = totalSeconds % 60;
-                } else {
+                    dispatch({ type: 'setCount', allCountTimes: newCount });
+                    if (totalSeconds == 0) {
+                        const studyMinute = statesRef.current.initCount.hour * 60;
+                        console.log(studyMinute);
+                        postStudyTime(studyMinute, 0);
+                        setIsRunning({ focusTime: false, breakTime: true });
+                    }
+                }
+
+                else if (totalSeconds <= 0 && totalBreakSeconds > 0 && isRunning.breakTime) {
+                    totalBreakSeconds--;
+                    breakCount.hour = Math.floor(totalBreakSeconds / 3600);
+                    breakCount.minute = Math.floor((totalBreakSeconds % 3600) / 60);
+                    breakCount.second = totalBreakSeconds % 60;
+                    dispatch({ type: 'setBreakCount', allBreakTimes: breakCount });
+                    if (totalBreakSeconds == 0) {
+
+                        const breakMinute = statesRef.current.initBreakCount.hour * 60;
+                        postStudyTime(0, breakMinute);
+
+                    }
+                }
+
+                else {
                     setIsRunning({
                         focusTime: false,
-                        breakTime: true,
+                        breakTime: false,
                     }); // Stop timer when time is up
                 }
-                dispatch({ type: 'setCount', allCountTimes: newCount })
+
             }, 1000);
-        } else {
+        }
+        else {
             clearInterval(intervalId);
         }
 
         return () => clearInterval(intervalId); // Cleanup interval on component unmount and state change
-    }, [isRunning, states.count]);
+    }, [isRunning, states.count, states.breakCount]);
 
-    const handleStartStop = useCallback(() => {
-        setIsRunning(prevCountState => {
-            return { focusTime: !prevCountState.focusTime, breakTime: !prevCountState.breakTime }
-        });
+    const handleStart = useCallback(() => {
+        setIsRunning({ focusTime: true, breakTime: false });
     }, []);
+
+    const handlePause = () => {
+        setIsRunning({ focusTime: false, breakTime: false });
+    };
+
+    const handleplayPause = () => {
+        setIsRunning({ focusTime: true, breakTime: false });
+    }
 
     const handleReset = () => {
         // setDisplayShort(false);
         dispatch({ type: 'setDisplayShort', status: false })
         // setCount({ hour: 1, minute: 0, second: 0 });
         dispatch({ type: 'setInitCount', allCountTimes: { hour: 1, minute: 0, second: 0 } })
+        dispatch({ type: 'setBreakCount', allBreakTimes: { hour: 0, minute: 1, second: 0 } })
         setIsRunning({
             focusTime: false,
             breakTime: false,
@@ -145,7 +195,7 @@ const Counter = () => {
 
         const decrementedHour = (states.count.minute - 5 == 0) ? states.count.hour : (states.count.minute - 5 < 0) ? states.count.hour - 1 : states.count.hour;
 
-        if (!(states.count.hour == 0 && states.count.minute == 10)) {
+        if (!(states.count.hour == 0 && states.count.minute == 5)) {
             // setCount({ ...count, hour: decrementedHour, minute: decrementedMinute })
             dispatch({ type: 'setInitCount', allCountTimes: { ...states.count, hour: decrementedHour, minute: decrementedMinute } })
         }
@@ -174,63 +224,77 @@ const Counter = () => {
 
             {/* timer */}
             {
-                !states.displayShort ? <div>
-                    <div className="w-full">
-                        <div className="mb-1 text-center text-xs">
-                            Focus time (min)
-                        </div>
-                        <div className="flex justify-between">
-                            <button onClick={countDecrement} className="hover:opacity-80"><FaMinus className="text-white text-base" /></button>
-                            <div className="rounded-xl bg-[#0C0403] px-3">
-                                <span className="text-[2rem] font-bold leading-[38px] tracking-[2px] text-white">
-                                    {(states.count.hour < 10 ? '0' + states.count.hour : states.count.hour) + ':'}
-                                    {(states.count.minute < 10 ? '0' + states.count.minute : states.count.minute) + ':'}
-                                    {states.count.second < 10 ? '0' + states.count.second : states.count.second}
-                                </span>
+                !states.displayShort ?
+                    <div>
+                        <div className="w-full">
+                            <div className="mb-1 text-center text-xs">
+                                Focus time (min)
                             </div>
-                            <button onClick={countIncrement} className="hover:opacity-80"><FaPlus className="text-white text-base" /></button>
-                        </div>
-                    </div>
-
-                    <div className="w-full mt-2">
-                        <div className="mb-1 text-center text-xs">
-                            Break time (min)
-                        </div>
-                        <div className="flex justify-between">
-                            <button onClick={breakCountDecrement} className="hover:opacity-80"><FaMinus className="text-white text-base" /></button>
-                            <div className="rounded-xl bg-[#0C0403] px-3">
-                                <span className="text-[2rem] font-bold leading-[38px] tracking-[2px] text-white">
-                                    {(states.breakCount.hour < 10 ? '0' + states.breakCount.hour : states.breakCount.hour) + ':'}
-                                    {(states.breakCount.minute < 10 ? '0' + states.breakCount.minute : states.breakCount.minute) + ':'}
-                                    {states.breakCount.second < 10 ? '0' + states.breakCount.second : states.breakCount.second}
-                                </span>
+                            <div className="flex justify-between">
+                                <button onClick={countDecrement} className="hover:opacity-80"><FaMinus className="text-white text-base" /></button>
+                                <div className="rounded-xl bg-[#0C0403] px-3">
+                                    <span className="text-[2rem] font-bold leading-[38px] tracking-[2px] text-white">
+                                        {(states.count.hour < 10 ? '0' + states.count.hour : states.count.hour) + ':'}
+                                        {(states.count.minute < 10 ? '0' + states.count.minute : states.count.minute) + ':'}
+                                        {states.count.second < 10 ? '0' + states.count.second : states.count.second}
+                                    </span>
+                                </div>
+                                <button onClick={countIncrement} className="hover:opacity-80"><FaPlus className="text-white text-base" /></button>
                             </div>
-                            <button onClick={breakCountIncrement} className="hover:opacity-80"><FaPlus className="text-white text-base" /></button>
                         </div>
+
+                        <div className="w-full mt-2">
+                            <div className="mb-1 text-center text-xs">
+                                Break time (min)
+                            </div>
+                            <div className="flex justify-between">
+                                <button onClick={breakCountDecrement} className="hover:opacity-80"><FaMinus className="text-white text-base" /></button>
+                                <div className="rounded-xl bg-[#0C0403] px-3">
+                                    <span className="text-[2rem] font-bold leading-[38px] tracking-[2px] text-white">
+                                        {(states.breakCount.hour < 10 ? '0' + states.breakCount.hour : states.breakCount.hour) + ':'}
+                                        {(states.breakCount.minute < 10 ? '0' + states.breakCount.minute : states.breakCount.minute) + ':'}
+                                        {states.breakCount.second < 10 ? '0' + states.breakCount.second : states.breakCount.second}
+                                    </span>
+                                </div>
+                                <button onClick={breakCountIncrement} className="hover:opacity-80"><FaPlus className="text-white text-base" /></button>
+                            </div>
+                        </div>
+
+                        <button onClick={handleStart} className="p-2 bg-transparent border border-gray-200 rounded-lg text-center w-full mt-5 hover:bg-gray-200 hover:text-black font-medium">
+                            Start Timer
+                        </button>
+
                     </div>
-
-                    <button onClick={handleStartStop} className="p-2 bg-transparent border border-gray-200 rounded-lg text-center w-full mt-5 hover:bg-gray-200 hover:text-black font-medium">
-                        Start Timer
-                    </button>
-
-                </div> :
-
-                    <div className="flex flex-row justify-between items-center">
-                        <span className="text-2xl font-bold leading-[38px] tracking-[2px] text-white">
-                            {(states.count.hour < 10 ? '0' + states.count.hour : states.count.hour) + ':'}
-                            {(states.count.minute < 10 ? '0' + states.count.minute : states.count.minute) + ':'}
-                            {states.count.second < 10 ? '0' + states.count.second : states.count.second}
-                        </span>
-                        <div className="flex items-center">
-                            <button onClick={handleReset} className="p-2 hover:bg-[#4e4749] duration-75 rounded"><IoStop className="text-base text-white" /></button>
-                            {
-                                isRunning.focusTime ? <button onClick={handleStartStop} className="p-2 hover:bg-[#4e4749] duration-75 rounded"><IoPause className="text-base text-white" /></button> :
-
-                                    <button onClick={handleStartStop} className="p-2 hover:bg-[#4e4749] duration-75 rounded"><IoPlay className="text-base text-white" /></button>
-                            }
+                    :
+                    isRunning.breakTime ?
+                        <div className="flex flex-row justify-between items-center">
+                            <h4 className="mb-1 text-center text-xs">
+                                Break time is running
+                            </h4>
+                            <span className="text-2xl font-bold leading-[38px] tracking-[2px] text-white">
+                                {(states.breakCount.hour < 10 ? '0' + states.breakCount.hour : states.breakCount.hour) + ':'}
+                                {(states.breakCount.minute < 10 ? '0' + states.breakCount.minute : states.breakCount.minute) + ':'}
+                                {states.breakCount.second < 10 ? '0' + states.breakCount.second : states.breakCount.second}
+                            </span>
 
                         </div>
-                    </div>
+                        :
+                        <div className="flex flex-row justify-between items-center">
+                            <span className="text-2xl font-bold leading-[38px] tracking-[2px] text-white">
+                                {(states.count.hour < 10 ? '0' + states.count.hour : states.count.hour) + ':'}
+                                {(states.count.minute < 10 ? '0' + states.count.minute : states.count.minute) + ':'}
+                                {states.count.second < 10 ? '0' + states.count.second : states.count.second}
+                            </span>
+                            <div className="flex items-center">
+                                <button onClick={handleReset} className="p-2 hover:bg-[#4e4749] duration-75 rounded"><IoStop className="text-base text-white" /></button>
+                                {
+                                    isRunning.focusTime ? <button onClick={handlePause} className="p-2 hover:bg-[#4e4749] duration-75 rounded"><IoPause className="text-base text-white" /></button> :
+
+                                        <button onClick={handleplayPause} className="p-2 hover:bg-[#4e4749] duration-75 rounded"><IoPlay className="text-base text-white" /></button>
+                                }
+
+                            </div>
+                        </div>
             }
 
         </div>

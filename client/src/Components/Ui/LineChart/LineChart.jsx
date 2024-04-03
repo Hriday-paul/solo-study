@@ -1,5 +1,6 @@
 import Chart from "react-apexcharts";
-const StepChart = ({ initWidth, data }) => {
+
+const LineChart = ({ initWidth, data }) => {
     const state = {
         options: {
             chart: {
@@ -8,7 +9,7 @@ const StepChart = ({ initWidth, data }) => {
                 parentHeightOffset: 0 // important to adjust height dynamically
             },
             xaxis: {
-                categories: ['5th', '4th', '3rd', '2nd', 'today'],
+                categories: Object.keys(data),
                 labels: {
                     style: {
                         colors: ['#A6ADBB', '#A6ADBB', '#A6ADBB', '#A6ADBB', '#A6ADBB', '#A6ADBB', '#A6ADBB',],
@@ -23,47 +24,47 @@ const StepChart = ({ initWidth, data }) => {
                 labels: {
                     style: {
                         colors: ['#A6ADBB', '#A6ADBB', '#A6ADBB', '#A6ADBB', '#A6ADBB', '#A6ADBB', '#A6ADBB',],
-                        fontSize: '8px',
+                        fontSize: '13px',
                         fontFamily: 'Helvetica, Arial, sans-serif',
                         fontWeight: 300,
                         cssClass: 'apexcharts-xaxis-label',
                     },
                 },
             },
-            // responsive: [
-            //     {
-            //         breakpoint: 640,
-            //         options: {
-            //             chart: {
-            //                 width: '400px'
-            //             }
-            //         }
-            //     },
-            //     {
-            //         breakpoint: 1025,
-            //         options: {
-            //             chart: {
-            //                 width: '350px'
-            //             }
-            //         }
-            //     },
-            //     {
-            //         breakpoint: 1281,
-            //         options: {
-            //             chart: {
-            //                 width: '380px'
-            //             }
-            //         }
-            //     },
-            //     {
-            //         breakpoint: 1536,
-            //         options: {
-            //             chart: {
-            //                 width: '380px'
-            //             }
-            //         }
-            //     }
-            // ],
+            responsive: [
+                {
+                    breakpoint: 640,
+                    options: {
+                        chart: {
+                            width: '320px'
+                        }
+                    }
+                },
+                {
+                    breakpoint: 1023,
+                    options: {
+                        chart: {
+                            width: '100px'
+                        }
+                    }
+                },
+                {
+                    breakpoint: 1281,
+                    options: {
+                        chart: {
+                            width: '300px'
+                        }
+                    }
+                },
+                {
+                    breakpoint: 1536,
+                    options: {
+                        chart: {
+                            width: '320px'
+                        }
+                    }
+                }
+            ],
             colors: ["#2bc6ff"],
             stroke: {
                 width: 3,
@@ -105,4 +106,4 @@ const StepChart = ({ initWidth, data }) => {
     );
 }
 
-export default StepChart;
+export default LineChart;

@@ -2,13 +2,15 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import Root from "../Pages/Root/Root"
-import Home from "../Pages/Home/Home";
+import StudyView from "../Pages/StudyView/StudyView";
 import Register from "../Pages/Registar/Registar";
 import CreatAccount from "../Pages/Registar/CreatAccount/CreatAccount";
 import Education from "../Pages/Registar/Education/Education";
 import StudyTime from "../Pages/Registar/StudyTime/StudyTime";
 import Welcome from "../Pages/Registar/Welcome/Welcome";
-
+import Home from "../Pages/Home/Home";
+import Login from "../Pages/Login/Login";
+import Private from "../Components/Shared/Private/Private";
 
 const router = createBrowserRouter([
   {
@@ -18,13 +20,17 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/study-room",
+        element: <Private> <StudyView /> </Private>,
       }
     ]
   },
   {
     path: "/register",
     element: <Register />,
-    children : [
+    children: [
       {
         path: "/register",
         element: <CreatAccount />,
@@ -42,6 +48,10 @@ const router = createBrowserRouter([
         element: <Welcome />,
       }
     ]
+  },
+  {
+    path: "/login",
+    element: <Login />,
   }
 ]);
 

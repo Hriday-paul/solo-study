@@ -1,16 +1,31 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../../ContextHandler/Authonicate/Authonicate";
 import { StepsContext } from "../../../ContextHandler/RegisterSteps/RegisterSteps";
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useForm } from "react-hook-form"
+import { updateProfile } from "firebase/auth";
+import toast, { Toaster } from "react-hot-toast";
 
 const CreatAccount = () => {
-    const { userInfo, googleLogin, githubLoagin } = useContext(AuthContext);
+    const { userInfo, creatUser } = useContext(AuthContext);
     const { setStepCount, setRegistrationInfo } = useContext(StepsContext);
     const navig = useNavigate();
+    const [loader, setLoader] = useState(false);
 
-    const handleGoogleSign = () => {
-        googleLogin()
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm();
+
+    const handleRegister = (data) => {
+        setLoader(true)
+        creatUser(data.email, data.password)
             .then(({ user }) => {
+                updateProfile(user, {
+                    displayName: data.name,
+                })
                 setRegistrationInfo(prevInfo => {
                     return {
                         ...prevInfo,
@@ -18,6 +33,13 @@ const CreatAccount = () => {
                         email: user?.email || ''
                     }
                 })
+                toast.success('Registration complete')
+                reset();
+                setLoader(false);
+            })
+            .catch(() => {
+                setLoader(false);
+                toast.error('Email already exist, try another email !')
             })
     }
 
@@ -35,29 +57,42 @@ const CreatAccount = () => {
         }
     }
 
-    const handleGithubLogin = () => {
-        githubLoagin()
-    }
-
     return (
         <div className="p-10 pb-5">
             <div className="flex flex-col md:flex-row justify-between gap-x-5 items-center border-b border-b-gray-300 mb-2 md:pb-5 ">
                 <div className="md:w-1/2">
-                    <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-700 mb-2">Sign In with your Google or Github Account </h2>
-                    <div className="mt-5 lg:mt-10">
-                        <div className="group w-full flex justify-center items-center mt-5 h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100 cursor-pointer" onClick={handleGoogleSign}>
-                            <div className="relative flex justify-between items-center space-x-7">
-                                <img src="https://tailus.io/sources/blocks/social/preview/images/google.svg" className="absolute left-0 w-4 md:w-3 lg:w-5" alt="google logo" />
-                                <span className=" sm:text-base md:text-sm lg:text-base font-bold text-gray-700 transition duration-300 group-hover:text-blue-600">Continue with Google</span>
+                    <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-700 mb-2">Creat a new account with email & password</h2>
+                    <div className="mt-5 lg:mt-5">
+                        <form onSubmit={handleSubmit(handleRegister)} className="space-y-3">
+                            <div>
+                                <label htmlFor="name" className="block mb-1 text-sm font-medium text-gray-900">Full name <span className="text-red-500">*</span></label>
+                                <input id="name" type="text" placeholder="name..." className={`w-full py-2 px-3 rounded-lg bg-white text-gray-900 border outline-0 ${errors.name ? 'border border-red-500' : 'border border-gray-400 focus:border-blue-500'}`} {...register("name", { required: true })} />
+                                {errors.name && <p className="text-red-500 text-sm">Name is required</p>}
                             </div>
-                        </div>
+                            <div>
+                                <label htmlFor="email" className="block mb-1 text-sm font-medium text-gray-900">Email <span className="text-red-500">*</span></label>
+                                <input id="email" type="email" placeholder="email..." className={`w-full py-2 px-3 rounded-lg bg-white text-gray-900 border outline-0 ${errors.email ? ' border-red-500' : ' border-gray-400 focus:border-blue-500'}`}  {...register("email", { required: true })} />
+                                {errors.email && <p className="text-red-500 text-sm">Email is required</p>}
+                            </div>
 
-                        <div className="group w-full flex justify-center items-center mt-3 lg:mt-5 h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100 cursor-pointer" onClick={handleGithubLogin}>
-                            <div className="relative flex justify-between items-center space-x-7">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/GitHub_Invertocat_Logo.svg/800px-GitHub_Invertocat_Logo.svg.png" className="absolute left-0 w-4 md:w-3 lg:w-5" alt="google logo" />
-                                <span className=" sm:text-base md:text-sm lg:text-base font-bold text-gray-700 transition duration-300 group-hover:text-blue-600">Continue with Github</span>
+                            <div>
+                                <label htmlFor="password" className="block mb-1 text-sm font-medium text-gray-900">Password <span className="text-red-500">*</span></label>
+                                <input id="password" type="password" placeholder="password..." className={`w-full py-2 px-3 rounded-lg bg-white text-gray-900 border outline-0 ${errors.password ? ' border-red-500' : ' border-gray-400  focus:border-blue-500 '}`} {...register("password", { required: true, pattern: /(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])/, minLength: 6 })} />
+                                {errors.password && <p className="text-red-500 text-sm">use minimum 1 capital, 1 number and 1 special character & 6 length</p>}
                             </div>
-                        </div>
+
+                            <div className="col-span-1 md:col-span-2 my-2">
+                                <button type="submit" className="btn btn-info w-full bg-blue-500 text-white hover:bg-blue-600">
+                                    Register Now
+                                    {
+                                        loader && <span className="loading loading-spinner"></span>
+                                    }
+                                </button>
+                                <p className="text-sm font-light text-gray-900 mt-3">
+                                    Already have an account? <Link to="/login" className="font-medium text-gray-800 hover:underline">Login here</Link>
+                                </p>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div className="md:w-1/2">
@@ -74,6 +109,7 @@ const CreatAccount = () => {
                     </button>
                 </div>
             </div>
+            <Toaster />
         </div>
     );
 };

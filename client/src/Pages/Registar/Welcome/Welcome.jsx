@@ -27,7 +27,7 @@ const Welcome = () => {
     }, [])
 
     const nextPage = () => {
-        navig('/')
+        navig('/study-room')
     };
 
     

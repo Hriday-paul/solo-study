@@ -23,7 +23,7 @@ const RegisterSteps = ({children}) => {
         email : '',
         password : '',
         education : '',
-        dailyStudyTime : 0,
+        dailyStudyTime : 5,
     })
 
     const stepInfo = {

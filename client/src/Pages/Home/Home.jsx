@@ -1,94 +1,31 @@
-import { useContext, useEffect, useRef } from "react";
-import RightSideTab from "../../Components/Shared/RightSideTab/RightSideTab";
-import { BgHandlerContext } from "../../ContextHandler/BgHandle/BgHandle";
-import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri";
-import LeftSideTab from "../../Components/Shared/LeftSideTab/LeftSideTab";
+import { Link } from "react-router-dom";
+import logo from '../../../public/logo.png'
+import { PiShootingStarThin } from "react-icons/pi";
 
 const Home = () => {
-    const { bgVideoSound, setCurrentVideo, currentVideo, motivText } = useContext(BgHandlerContext);
-    const iframeref = useRef(null);
-
-    function onPlayerReady(event) {
-        // console.log(event.target);
-        setCurrentVideo(event.target);
-        event.target.setVolume(bgVideoSound);
-    }
-
-    useEffect(() => {
-        function createYouTubePlayer() {
-            window.YT.ready(function () {
-                new window.YT.Player(iframeref.current, {
-                    videoId: 'XxEhuSJF780',
-                    width: 640,
-                    height: 360,
-                    playerVars: {
-                        'autoplay': 1,
-                        'mute': 1,
-                        'controls': 0,
-                        'autohide': 1,
-                        'origin': 'http://localhost:5173'
-                    },
-                    events: {
-                        'onReady': onPlayerReady,
-                    },
-                });
-
-                const ifr = document.getElementsByTagName('iframe')[0];
-                // Apply class to the iframe
-                ifr.classList.add('pointer-events-none', 'absolute', 'left-1/2', 'top-1/2', 'box-border', 'h-[56.25vw]', 'min-h-full', 'w-screen', 'min-w-full', '-translate-x-1/2', '-translate-y-1/2');
-                ifr.frameBorder = 0;
-                ifr.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-            });
-        }
-
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        tag.onload = createYouTubePlayer;
-
-        return () => {
-            window.onYouTubeIframeAPIReady = null;
-        };
-    }, []);
-
-    const changeVolume = (valume) => {
-        if (currentVideo) {
-            currentVideo.setVolume(valume);
-        }
-    };
-
-    useEffect(() => {
-        changeVolume(bgVideoSound);
-    }, [bgVideoSound]);
-
-
     return (
-        <div className="relative h-screen overflow-hidden">
-            <div className="overflow-hidden h-screen">
-                <div className="h-screen overflow-hidden">
-                    {/* You can include the iframe directly in your JSX */}
-                    <div ref={iframeref}></div>
+        <div className=" bg-[url('https://img.freepik.com/free-vector/background-abstract-line-digital-gradient-luxury_483537-2367.jpg')] bg-no-repeat bg-cover">
+            <div className="max-w-7xl mx-auto px-4">
+                <nav className="flex justify-between items-center py-2">
+                    <img className="h-10 md:h-14 lg:h-16 w-10 md:w-14 lg:w-16" src={logo} alt="logo" />
+                    <Link to="/login" className="bg-transparent hover:bg-[#34AAFC] text-[#34AAFC] font-medium hover:text-white py-2 px-3 lg:px-5 text-sm lg:text-base border border-[#34AAFC] hover:border-transparent rounded-full font-popins">Login Now</Link>
+                </nav>
+                <div className="flex justify-center items-center min-h-[calc(100vh-56px)] md:min-h-[calc(100vh-72px)] lg:min-h-[calc(100vh-80px)]">
+                    <div className="text-center mx-auto w-full md:w-3/5">
+                        <h2 className="text-3xl lg:text-5xl font-bold text-gray-100 mb-2">
+                            Empower your learning journey with <span className="text-transparent bg-gradient-to-r from-sky-400 to-blue-700 bg-clip-text text-5xl lg:text-6xl font-bold">Study Tracker</span>
+                        </h2>
+                        <p className="text-base md:text-lg lg:text-xl text-gray-300 my-2 text-center w-3/5 mx-auto mb-5">It ultimate tool to organize your study routines and boost your academic performance.</p>
 
-                    <div>
-                        <div className="relative mb-4 flex h-12 items-center justify-between p-5">
-                            
-                            <LeftSideTab/>
-                            <div className="relative z-30 flex gap-x-2 text-xs text-white">
-                                <RightSideTab />
-                            </div>
-                        </div>
+                        <Link to='/study-room' className="inline-flex items-center px-4 py-2 mb-3 mr-1 text-base font-semibold text-white no-underline align-middle bg-sky-600 border border-transparent border-solid rounded-md cursor-pointer select-none sm:mb-0 sm:w-auto hover:bg-sky-700 hover:border-sky-700 hover:text-white focus-within:bg-sky-700 focus-within:border-sky-700">
+                            Get Started
+                            <PiShootingStarThin className="text-white text-xl ml-2"></PiShootingStarThin>
+                        </Link>
+
+
                     </div>
-                    <div className="relative h-full w-full flex justify-center items-center -mt-20">
-                        <div className="w-1/2 mx-auto text-center">
-                            <span className="mx-auto text-center">
-                                <RiDoubleQuotesL className="text-white text-lg md:text-xl lg:text-3xl inline -mt-4 md:-mt-8 lg:-mt-16" />
-                                <h2 className="text-xl md:text-3xl lg:text-5xl text-yellow-500 text-center font-medium inline font-serif">{motivText}</h2>
-                                <RiDoubleQuotesR className="text-white text-lg md:text-xl lg:text-3xl -mt-4 md:-mt-8 lg:-mt-16 inline" />
-                            </span>
-                        </div>
-                    </div>
+
+
                 </div>
             </div>
         </div>
