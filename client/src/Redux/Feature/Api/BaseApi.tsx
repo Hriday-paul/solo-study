@@ -29,7 +29,7 @@ type statisticReturnType = {
 const baseApi = createApi({
     reducerPath: 'api',
     tagTypes: ['goals', 'studyTime'],
-    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:4000' }),
+    baseQuery: fetchBaseQuery({ baseUrl: 'https://study-here-server.vercel.app' }),
     endpoints: (builder) => ({
         getVideoByTab: builder.query<iVideoItem[], number>({
             query: (tab) => `/getVideoByTab/${tab}`,

@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const axiosSequre = axios.create({
-    baseURL: 'http://localhost:4000',
+    baseURL: 'https://study-here-server.vercel.app',
     // withCredentials : true,
 })
 function UseAxiosPublic() {
