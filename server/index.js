@@ -227,9 +227,9 @@ async function run() {
         });
 
         // get motivation
-        app.get('/motivations', async (req, res) => {
+        app.get('/motivations/:lang', async (req, res) => {
             try {
-                const result = await motivationCollection.find().toArray();
+                const result = await motivationCollection.find({lang : req.params.lang}).toArray();
                 res.send(result);
             } catch (err) {
                 res.status(400).send({ err })
@@ -248,7 +248,7 @@ async function run() {
                 const others = min24 - (studyTime + breakTime);
                 await list.push(studyTime)
                 await list.push(breakTime)
-                await list.push(others)
+                await list.push(others);
                 res.send(list);
             }
             catch (err) {
@@ -272,25 +272,26 @@ async function run() {
                 const counts = {}
                 const result = await study.find({ date: { $in: req.dateList }, email: req.query.email }).toArray();
 
+
                 req.dateList.forEach((date) => {
                     result.forEach((resObj) => {
                         if (resObj.date == date) {
-                            counts[date] = resObj.studyTime
+                            counts[date] = Math.round(resObj.studyTime)
                         }
-                        
+
                     })
                     if (!(date in counts)) {
                         counts[date] = 0
                     }
                 })
 
-                const today = req.dateList[req.dateList.length-1];
-                const todayStudy = await study.findOne({email: req.query.email, date : today});
+                const today = req.dateList[req.dateList.length - 1];
+                const todayStudy = await study.findOne({ email: req.query.email, date: today });
 
-                res.send({counts, todayStudy : todayStudy.studyTime});
+                res.send({ counts, todayStudy: todayStudy?.studyTime ? Math.round(todayStudy?.studyTime) : 0 });
             }
             catch (err) {
-                res.status(400).send({ err })
+                res.status(400).send({ err: err.message })
             }
         })
 

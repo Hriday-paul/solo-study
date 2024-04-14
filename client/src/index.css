@@ -6,28 +6,27 @@ iframe {
     overflow: hidden !important;
 }
 
-
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-track {
+.ant-slider .ant-slider-track {
     background-color: rgb(255, 255, 255);
     height: 2px;
 }
 
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle:hover .ant-slider-track{
+.ant-slider .ant-slider-handle:hover .ant-slider-track{
     background-color: rgb(255, 255, 255);
 }
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-rail{
+.ant-slider .ant-slider-rail{
     background-color: gray;
     height: 2px;
 }
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider:hover .ant-slider-rail{
+.ant-slider:hover .ant-slider-rail{
     background-color: gray;
     height: 2px;
 }
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider:hover .ant-slider-track{
+.ant-slider:hover .ant-slider-track{
     background-color: rgb(255, 255, 255);
 }
 
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle::after {
+ .ant-slider .ant-slider-handle::after {
     background-color: black;
     height: 5px;
     width: 5px;
@@ -36,7 +35,7 @@ iframe {
 }
 
 
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle:hover::after {
+ .ant-slider .ant-slider-handle:hover::after {
     background-color: black;
     height: 5px;
     width: 5px;
@@ -45,7 +44,7 @@ iframe {
     inset-block-start : 0;
 }
 
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle:focus::after {
+.ant-slider .ant-slider-handle:focus::after {
     background-color: black;
     height: 5px;
     width: 5px;
@@ -54,7 +53,7 @@ iframe {
     inset-block-start : 0;
 }
 
-:where(.css-dev-only-do-not-override-djtmh8).ant-slider .ant-slider-handle::after:hover .ant-slider-track {
+.ant-slider .ant-slider-handle::after:hover .ant-slider-track {
     background-color: chartreuse;
 }
 
@@ -70,7 +69,7 @@ iframe {
 
  /* ant design change radio size */
 
- :where(.css-dev-only-do-not-override-djtmh8).ant-radio-wrapper .ant-radio-inner{
+.ant-radio-wrapper .ant-radio-inner{
     height: 18px;
     width: 18px;
  }
@@ -80,4 +79,8 @@ iframe {
 
  .ant-drawer-close, .ant-drawer-title{
     color: white !important;
+}
+
+.react-tabs__tab--selected{
+    border: none !important;
 }
