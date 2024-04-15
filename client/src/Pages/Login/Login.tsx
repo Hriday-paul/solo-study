@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form"
 import toast, { Toaster } from "react-hot-toast";
-import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { GithubAuthProvider, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import auth from '../../firebase.init'
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/Store";
@@ -17,6 +17,8 @@ const Login = () => {
     const userInfo = useSelector((state: RootState) => state.user);
     const dispatch = useDispatch<AppDispatch>();
     const provider = new GoogleAuthProvider();
+    const gitProvider = new GithubAuthProvider();
+
 
     const {
         register,
@@ -51,6 +53,23 @@ const Login = () => {
                 dispatch(signUpError());
             })
     };
+
+    const githubSignIn = async()=>{
+        signInWithPopup(auth, gitProvider)
+        .then(({ user }) => {
+            dispatch(loginWithGoogle({ name: user.displayName || '', email: user.email || '', password : '', education : '', dailyStudyTime : 5 }))
+            navig('/')
+        })
+        .catch((err) => {
+            dispatch(signUpError());
+            if(err.message === 'Firebase: Error (auth/account-exists-with-different-credential).'){
+                toast.error('You have registered, different method!')
+            }
+            else{
+                toast.error('Something wrong, try again!')
+            }
+        })
+    }
 
     return (
         <div className="bg-[url('https://png.pngtree.com/thumb_back/fh260/background/20210115/pngtree-25d-business-job-recruitment-poster-background-image_518343.jpg')] bg-cover min-h-screen bg-no-repeat flex justify-center items-center">
@@ -87,7 +106,7 @@ const Login = () => {
                             <div className="p-2 border border-blue-500 inline-block rounded-full cursor-pointer" onClick={handleGoogleSign}>
                                 <img src="https://tailus.io/sources/blocks/social/preview/images/google.svg" className="w-5 h-5" alt="google logo" />
                             </div>
-                            <div className="p-2 border border-blue-500 inline-block rounded-full cursor-pointer" >
+                            <div className="p-2 border border-blue-500 inline-block rounded-full cursor-pointer" onClick={githubSignIn}>
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/GitHub_Invertocat_Logo.svg/800px-GitHub_Invertocat_Logo.svg.png" className="w-5 h-5" alt="github logo" />
                             </div>
                         </div>
