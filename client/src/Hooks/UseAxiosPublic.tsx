@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const axiosSequre = axios.create({
-    baseURL: 'https://study-here-server.vercel.app',
+    baseURL: 'https://study-tracker-gxks.onrender.com',
     // withCredentials : true,
 })
 function UseAxiosPublic() {

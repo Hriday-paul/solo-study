@@ -1,6 +1,6 @@
-import { useContext, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Redux/Store";
+import { useContext, useEffect, useRef} from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Redux/Store";
 import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri";
 import LeftSideTab from "../../Components/Shared/LeftSideTab/LeftSideTab";
 import RightSideTab from "../../Components/Shared/RightSideTab/RightSideTab";
@@ -9,21 +9,20 @@ import { BgHandlerContext } from "../../ContextHandler/BgHandler/BgHandle";
 const StudyView = () => {
     const { setCurrentVideo, currentVideo } = useContext(BgHandlerContext) || { setCurrentVideo: () => { }, currentVideo: '' }
     const videoSound = useSelector((state: RootState) => state.currentBgSound);
-    const {text} = useSelector((state: RootState) => state.motivationText);
-    const dispatch = useDispatch<AppDispatch>();
-    const iframeref = useRef<HTMLDivElement>(null);
+    const { text } = useSelector((state: RootState) => state.motivationText);
+    const iframeref = useRef<HTMLIFrameElement>(null);
 
-    
+
     useEffect(() => {
         function onPlayerReady(event: YT.PlayerEvent): void {
             setCurrentVideo(event.target);
+            console.log(event.target);
             event.target.setVolume(videoSound.currentSound);
         }
 
-        let player: YT.Player | undefined;
 
         function createYouTubePlayer(): void {
-            player = new YT.Player(iframeref.current!, {
+            new window.YT.Player(iframeref.current!, {
                 videoId: 'XxEhuSJF780',
                 width: 640,
                 height: 360,
@@ -39,32 +38,33 @@ const StudyView = () => {
                 },
             });
 
+            const ifr = document.getElementsByTagName('iframe')[0];
+            // Apply class to the iframe
+            ifr.classList.add('pointer-events-none', 'absolute', 'left-1/2', 'top-1/2', 'box-border', 'h-[56.25vw]', 'min-h-full', 'w-screen', 'min-w-full', '-translate-x-1/2', '-translate-y-1/2');
+
+            ifr.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
             iframeref.current!.classList.add('pointer-events-none', 'absolute', 'left-1/2', 'top-1/2', 'box-border', 'h-[56.25vw]', 'min-h-full', 'w-screen', 'min-w-full', '-translate-x-1/2', '-translate-y-1/2');
 
         }
 
         function loadYouTubeAPI(): void {
             const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
+
+            tag.src = "https://www.youtube.com/iframe_api";
             const firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
             tag.onload = createYouTubePlayer;
         }
 
-        if (!window.YT) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            window.onYouTubeIframeAPIReady = loadYouTubeAPI;
+        if (window.YT) {
+            createYouTubePlayer();
         } else {
+            loadYouTubeAPI();
             createYouTubePlayer();
         }
 
-        return () => {
-            if (player) {
-                player.destroy();
-            }
-        };
-    }, [dispatch, setCurrentVideo])
+    }, [])
 
 
     const changeVolume = (valume: number) => {
