@@ -76,7 +76,6 @@ const baseApi = createApi({
             }),
             invalidatesTags: ['goals']
         }),
-        //
 
 
         // user statistics api

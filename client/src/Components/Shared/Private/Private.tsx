@@ -38,7 +38,7 @@ function Private({ children }: { children: React.ReactNode }) {
         </div>
     }
 
-    else if (userInfo.email && userInfo.name) {
+    else if (userInfo.email) {
         return children;
     }
 

@@ -34,7 +34,7 @@ const Login = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then(({ user }) => {
                 dispatch(signUpSuccessFull({ name: user.displayName, email: user.email }))
-                navig('/')
+                navig('/study-room')
             })
             .catch(() => {
                 toast.error('Enter valid email & password !')
@@ -46,7 +46,7 @@ const Login = () => {
         signInWithPopup(auth, provider)
             .then(({ user }) => {
                 dispatch(loginWithGoogle({ name: user.displayName || '', email: user.email || '', password : '', education : '', dailyStudyTime : 5 }))
-                navig('/')
+                navig('/study-room')
             })
             .catch(() => {
                 toast.error('Something wrong, try again!')
@@ -58,7 +58,7 @@ const Login = () => {
         signInWithPopup(auth, gitProvider)
         .then(({ user }) => {
             dispatch(loginWithGoogle({ name: user.displayName || '', email: user.email || '', password : '', education : '', dailyStudyTime : 5 }))
-            navig('/')
+            navig('/study-room')
         })
         .catch((err) => {
             dispatch(signUpError());

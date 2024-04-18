@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { creatUserWithFb, uploadServerUser } from './HandleUser';
+import { uploadServerUser } from './HandleUser';
 // import type { PayloadAction } from '@reduxjs/toolkit'
 
 interface IuserProp {
@@ -40,18 +40,15 @@ const initState: IuserProp = {
 
 
 const creatUser = createAsyncThunk<returnType, creatType>('user/creat', async ({ name, email, password, education, dailyStudyTime }: creatType) => {
-    const { user } = await creatUserWithFb(email, password, name);
-    const finalEmail = user.email ? user.email : ''
-    const finalname = user.displayName ? user.displayName : ''
 
-    await uploadServerUser({ name: finalname, email: finalEmail, password, education, dailyStudyTime });
+    await uploadServerUser({ name, email, password, education, dailyStudyTime });
 
-    return { name: finalname, email: finalEmail }
+    return { name, email}
 });
 
-const loginWithGoogle = createAsyncThunk<returnType, creatType>('/user/signInGoogle', async ({ name, email, password}: creatType) => {
+const loginWithGoogle = createAsyncThunk<returnType, creatType>('/user/signInGoogle', async ({ name, email, password, education , dailyStudyTime}: creatType) => {
 
-    await uploadServerUser({ name, email, password});
+    await uploadServerUser({ name, email, password, education, dailyStudyTime});
 
     return { name, email }
 })

@@ -33,7 +33,7 @@ const StatisticsTab = () => {
                             <LuAlarmClock className="text-2xl text-white" />
                             <div>
                                 <h4 className="text-xs font-medium text-white text-center mb-1">{`Today's study time`}</h4>
-                                <h5 className="text-sm font-bold text-white text-center">{Math.floor(data?.todayStudy || 0 / 60)}h {Math.round(data?.todayStudy || 0 % 60)}min</h5>
+                                <h5 className="text-sm font-bold text-white text-center">{Math.floor((data?.todayStudy || 0) / 60)}h {Math.round((data?.todayStudy || 0) % 60)}min</h5>
                             </div>
                         </div>
                         <div className="my-4 bg-[#201C1B] rounded-lg min-h-20">

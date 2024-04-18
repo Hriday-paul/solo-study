@@ -31,7 +31,7 @@ const LeftSideTab = () => {
     const navig = useNavigate();
 
     const clickPersonalTimer = () => {
-        if (!(userInfo.email && userInfo.name)) {
+        if (!(userInfo.email)) {
             navig('/register')
         }
         else {
@@ -40,7 +40,7 @@ const LeftSideTab = () => {
     }
 
     const clicksessionGoal = () => {
-        if (!(userInfo.email && userInfo.name)) {
+        if (!(userInfo.email)) {
             navig('/register')
         }
         else {
