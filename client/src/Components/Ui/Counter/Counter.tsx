@@ -53,7 +53,7 @@ const reducer = (currentState: initialStateType, action: actionType): initialSta
 }
 
 const Counter = ({ showHideTimer }: { showHideTimer: () => void }) => {
-    const { email } = useSelector((state: RootState) => state.user)
+    const {email} = useSelector((state: RootState) => state.user)
     const [states, dispatch] = useReducer(reducer, initialState);
     const [addStudyTime] = useAddStudyTimeMutation();
     const [isRunning, setIsRunning] = useState({

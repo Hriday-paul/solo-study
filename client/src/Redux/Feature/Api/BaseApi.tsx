@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { apiUrl } from '../../../Hooks/UseAxiosPublic';
 
 interface iVideoItem {
     _id: string;
@@ -29,7 +30,7 @@ type statisticReturnType = {
 const baseApi = createApi({
     reducerPath: 'api',
     tagTypes: ['goals', 'studyTime'],
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://study-tracker-gxks.onrender.com' }),
+    baseQuery: fetchBaseQuery({ baseUrl: apiUrl }),
     endpoints: (builder) => ({
         getVideoByTab: builder.query<iVideoItem[], number>({
             query: (tab) => `/getVideoByTab/${tab}`,

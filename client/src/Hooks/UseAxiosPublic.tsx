@@ -1,7 +1,9 @@
 import axios from "axios"
 
+export const apiUrl = 'https://study-tracker-gxks.onrender.com/api';
+
 const axiosSequre = axios.create({
-    baseURL: 'https://study-tracker-gxks.onrender.com',
+    baseURL: apiUrl,
     // withCredentials : true,
 })
 function UseAxiosPublic() {
