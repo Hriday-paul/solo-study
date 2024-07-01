@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "axios" ;
 
 export const apiUrl = 'https://study-tracker-gxks.onrender.com/api';
 
@@ -12,4 +12,4 @@ function UseAxiosPublic() {
   )
 }
 
-export default UseAxiosPublic
+export default UseAxiosPublic;
