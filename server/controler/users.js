@@ -16,7 +16,7 @@ const addOrUpdateUser = async (req, res) => {
             
         }
 
-        res.send(result);
+        res.status(200).send(result);
     } catch (err) {
         res.status(400).send({ err : err.message })
     }
